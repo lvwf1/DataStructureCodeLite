@@ -1,0 +1,1 @@
+./Debug/main.cpp.o ./Debug/CARD.cpp.o ./Debug/throttle.cpp.o   

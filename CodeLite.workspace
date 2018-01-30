@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="CodeLite" Database="" Version="10.0.0">
+  <Project Name="Lab1" Path="Lab1/Lab1.project" Active="No"/>
+  <Project Name="Assignment1" Path="Assignment1/Assignment1.project" Active="No"/>
+  <Project Name="Lab2" Path="Lab2/Lab2.project" Active="No"/>
+  <Project Name="Point" Path="Point/Point.project" Active="No"/>
+  <Project Name="newpoint" Path="newpoint/newpoint.project" Active="No"/>
+  <Project Name="Assignment2" Path="Assignment2/Assignment2.project" Active="No"/>
+  <Project Name="bag" Path="bag/bag.project" Active="No"/>
+  <Project Name="Lab3" Path="Lab3/Lab3.project" Active="No"/>
+  <Project Name="Pointer" Path="Pointer/Pointer.project" Active="No"/>
+  <Project Name="Lab4" Path="Lab4/Lab4.project" Active="No"/>
+  <Project Name="Assignment3" Path="Assignment3/Assignment3.project" Active="No"/>
+  <Project Name="bag2" Path="Bag2/Bag2.project" Active="No"/>
+  <Project Name="Assignment4" Path="Assignment4/Assignment4.project" Active="No"/>
+  <Project Name="Lab5" Path="Lab5/Lab5.project" Active="No"/>
+  <Project Name="bag3" Path="Bag3/Bag3.project" Active="No"/>
+  <Project Name="Lab6" Path="Lab6/Lab6.project" Active="No"/>
+  <Project Name="Assignment5" Path="Assignment5/Assignment5.project" Active="No"/>
+  <Project Name="Lab7" Path="Lab7/Lab7.project" Active="No"/>
+  <Project Name="Assignment6" Path="Assignment6/Assignment6.project" Active="No"/>
+  <Project Name="bag4" Path="bag4/bag4.project" Active="No"/>
+  <Project Name="Lab8" Path="Lab8/Lab8.project" Active="No"/>
+  <Project Name="Assignment7" Path="Assignment7/Assignment7.project" Active="No"/>
+  <Project Name="Lab9" Path="Lab9/Lab9.project" Active="No"/>
+  <Project Name="Lab10" Path="Lab10/Lab10.project" Active="No"/>
+  <Project Name="Assignment8" Path="Assignment8/Assignment8.project" Active="No"/>
+  <Project Name="Lab11" Path="Lab11/Lab11.project" Active="No"/>
+  <Project Name="Assignment9" Path="Assignment9/Assignment9.project" Active="No"/>
+  <Project Name="Lab12" Path="Lab12/Lab12.project" Active="No"/>
+  <Project Name="wspgrep" Path="wspgrep/wspgrep.project" Active="No"/>
+  <Project Name="PagingReplacement" Path="PagingReplacement/PagingReplacement.project" Active="No"/>
+  <Project Name="MultiThreadedSorting" Path="MultiThreadedSorting/MultiThreadedSorting.project" Active="No"/>
+  <Project Name="BTree" Path="BTree/BTree.project" Active="No"/>
+  <Project Name="Assignment10" Path="Assignment10/Assignment10.project" Active="Yes"/>
+  <Project Name="BTreeSet" Path="BTreeSet/BTreeSet.project" Active="No"/>
+  <Project Name="Lab13" Path="Lab13/Lab13.project" Active="No"/>
+  <Project Name="Assignment11" Path="Assignment11/Assignment11.project" Active="No"/>
+  <Project Name="NodeTable" Path="NodeTable/NodeTable.project" Active="No"/>
+  <Project Name="Lab14" Path="Lab14/Lab14.project" Active="No"/>
+  <Project Name="ReverseString" Path="ReverseString/ReverseString.project" Active="No"/>
+  <Project Name="Assignment12" Path="Assignment12/Assignment12.project" Active="No"/>
+  <Project Name="Lab15" Path="Lab15/Lab15.project" Active="No"/>
+  <Project Name="Assignment13" Path="Assignment13/Assignment13.project" Active="No"/>
+  <Project Name="Assignment14" Path="Assignment14/Assignment14.project" Active="No"/>
+  <Project Name="Assignment15" Path="Assignment15/Assignment15.project" Active="No"/>
+  <Project Name="Dijkstra" Path="Dijkstra/Dijkstra.project" Active="No"/>
+  <Project Name="Jiaxin" Path="Jiaxin/Jiaxin.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="Lab1" ConfigName="Debug"/>
+      <Project Name="Assignment1" ConfigName="Debug"/>
+      <Project Name="Lab2" ConfigName="Debug"/>
+      <Project Name="Point" ConfigName="Debug"/>
+      <Project Name="newpoint" ConfigName="Debug"/>
+      <Project Name="Assignment2" ConfigName="Debug"/>
+      <Project Name="bag" ConfigName="Debug"/>
+      <Project Name="Lab3" ConfigName="Debug"/>
+      <Project Name="Pointer" ConfigName="Debug"/>
+      <Project Name="Lab4" ConfigName="Debug"/>
+      <Project Name="Assignment3" ConfigName="Debug"/>
+      <Project Name="bag2" ConfigName="Debug"/>
+      <Project Name="Assignment4" ConfigName="Debug"/>
+      <Project Name="Lab5" ConfigName="Debug"/>
+      <Project Name="bag3" ConfigName="Debug"/>
+      <Project Name="Lab6" ConfigName="Debug"/>
+      <Project Name="Assignment5" ConfigName="Debug"/>
+      <Project Name="Lab7" ConfigName="Debug"/>
+      <Project Name="Assignment6" ConfigName="Debug"/>
+      <Project Name="bag4" ConfigName="Debug"/>
+      <Project Name="Lab8" ConfigName="Debug"/>
+      <Project Name="Assignment7" ConfigName="Debug"/>
+      <Project Name="Lab9" ConfigName="Debug"/>
+      <Project Name="Lab10" ConfigName="Debug"/>
+      <Project Name="Assignment8" ConfigName="Debug"/>
+      <Project Name="Lab11" ConfigName="Debug"/>
+      <Project Name="Assignment9" ConfigName="Debug"/>
+      <Project Name="Lab12" ConfigName="Debug"/>
+      <Project Name="wspgrep" ConfigName="Debug"/>
+      <Project Name="PagingReplacement" ConfigName="Debug"/>
+      <Project Name="MultiThreadedSorting" ConfigName="Debug"/>
+      <Project Name="BTree" ConfigName="Debug"/>
+      <Project Name="Assignment10" ConfigName="Debug"/>
+      <Project Name="BTreeSet" ConfigName="Debug"/>
+      <Project Name="Lab13" ConfigName="Debug"/>
+      <Project Name="Assignment11" ConfigName="Debug"/>
+      <Project Name="NodeTable" ConfigName="Debug"/>
+      <Project Name="Lab14" ConfigName="Debug"/>
+      <Project Name="ReverseString" ConfigName="Debug"/>
+      <Project Name="Assignment12" ConfigName="Debug"/>
+      <Project Name="Lab15" ConfigName="Debug"/>
+      <Project Name="Assignment13" ConfigName="Debug"/>
+      <Project Name="Assignment14" ConfigName="Debug"/>
+      <Project Name="Assignment15" ConfigName="Debug"/>
+      <Project Name="Dijkstra" ConfigName="Debug"/>
+      <Project Name="Jiaxin" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="Lab1" ConfigName="Release"/>
+      <Project Name="Assignment1" ConfigName="Release"/>
+      <Project Name="Lab2" ConfigName="Release"/>
+      <Project Name="Point" ConfigName="Release"/>
+      <Project Name="newpoint" ConfigName="Release"/>
+      <Project Name="Assignment2" ConfigName="Release"/>
+      <Project Name="bag" ConfigName="Release"/>
+      <Project Name="Lab3" ConfigName="Release"/>
+      <Project Name="Pointer" ConfigName="Release"/>
+      <Project Name="Lab4" ConfigName="Release"/>
+      <Project Name="Assignment3" ConfigName="Release"/>
+      <Project Name="bag2" ConfigName="Release"/>
+      <Project Name="Assignment4" ConfigName="Release"/>
+      <Project Name="Lab5" ConfigName="Release"/>
+      <Project Name="bag3" ConfigName="Release"/>
+      <Project Name="Lab6" ConfigName="Release"/>
+      <Project Name="Assignment5" ConfigName="Release"/>
+      <Project Name="Lab7" ConfigName="Release"/>
+      <Project Name="Assignment6" ConfigName="Release"/>
+      <Project Name="bag4" ConfigName="Release"/>
+      <Project Name="Lab8" ConfigName="Release"/>
+      <Project Name="Assignment7" ConfigName="Release"/>
+      <Project Name="Lab9" ConfigName="Release"/>
+      <Project Name="Lab10" ConfigName="Release"/>
+      <Project Name="Assignment8" ConfigName="Release"/>
+      <Project Name="Lab11" ConfigName="Release"/>
+      <Project Name="Assignment9" ConfigName="Release"/>
+      <Project Name="Lab12" ConfigName="Release"/>
+      <Project Name="wspgrep" ConfigName="Release"/>
+      <Project Name="PagingReplacement" ConfigName="Release"/>
+      <Project Name="MultiThreadedSorting" ConfigName="Release"/>
+      <Project Name="BTree" ConfigName="Release"/>
+      <Project Name="Assignment10" ConfigName="Release"/>
+      <Project Name="BTreeSet" ConfigName="Release"/>
+      <Project Name="Lab13" ConfigName="Release"/>
+      <Project Name="Assignment11" ConfigName="Release"/>
+      <Project Name="NodeTable" ConfigName="Release"/>
+      <Project Name="Lab14" ConfigName="Release"/>
+      <Project Name="ReverseString" ConfigName="Release"/>
+      <Project Name="Assignment12" ConfigName="Release"/>
+      <Project Name="Lab15" ConfigName="Release"/>
+      <Project Name="Assignment13" ConfigName="Release"/>
+      <Project Name="Assignment14" ConfigName="Release"/>
+      <Project Name="Assignment15" ConfigName="Release"/>
+      <Project Name="Dijkstra" ConfigName="Release"/>
+      <Project Name="Jiaxin" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

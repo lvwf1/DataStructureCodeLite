@@ -1,0 +1,92 @@
+#include <cassert>    // Provides assert
+#include <algorithm> // Provides swap
+
+using namespace std;
+
+template<class T>
+heap<T>::heap()
+{
+    
+}
+// postcondition: empty heap has been created
+template<class T>
+unsigned int heap<T>::size() const
+{
+    return v.size();//The heap size is equal to the vector size
+}
+// postcondition: number of elements in a heap has been returned
+template<class T>
+bool heap<T>::is_empty() const
+{
+    return v.empty();//The heap is empty if the vector is empty
+}
+// postcondtion: returned whether the heap is empty
+template<class T>
+void heap<T>::insert (const T& item)
+{
+    v.push_back(item);//Put the new node in the next available spot.
+    unsigned int i=v.size()-1;
+    while(i>0)
+    {
+        if(v[i]>v[(i-1)/2])
+        {
+            swap(v[i],v[(i-1)/2]);//Push the new node upward, swapping with its parent until the new node reaches an acceptable location.
+        }
+        i=(i-1)/2;//reheapification upward
+    }
+}
+// postcondition: item has been added
+template<class T>
+void heap<T>::remove()
+{
+    v[0]=v[size()-1];//Move the last node onto the root.
+    v.pop_back();//Delete the last node
+    unsigned int i=0;
+    while(2*i+1<size())
+    {
+        unsigned int j=max_child(i);
+        if(v[i]<v[j])
+        {
+            swap(v[i],v[j]);//Push the out-of-place node downward, swapping with its larger child until the new node reaches an acceptable location.
+        }
+        i=j;//reheapification downward.
+    }
+}
+// precondition: heap is not empty
+// postcondition: largest item has been removed from the heap
+template<class T>
+T heap<T>::max() const
+{
+    assert(!is_empty());
+    return v[0];//The first element is the largest element
+}
+// precondition: heap is not empty
+// postcondition: copy of largest element in the heap has been returned
+template<class T>
+T& heap<T>::max()
+{
+    assert(!is_empty());
+    return v[0];//The first element is the largest element
+}
+// precondition: heap is not empty
+// postcondition: access to largest element in the heap has been returned
+template<class T>
+void heap<T>::display()
+{
+    for(unsigned int i=0;i<size();i++)
+        cout<<v[i]<<" ";
+    cout<<endl;
+}
+// postcondition: display all elements
+template<class T>
+unsigned int heap<T>::max_child (unsigned int index) const
+{
+    assert(2*index+1<size());
+    if(v[2*index+1]>v[2*index+2]||2*index+2 ==size())//Return left child if left child is the only child or left child is greater than the right child
+        return 2*index+1;
+    else
+        return 2*index+2;//Return right child if the right child is greater than left child
+}
+// precondition: element at index has children
+// postcondition: index of the larger child has been returned
+//                if there is only 1 child - index of that child has been returned

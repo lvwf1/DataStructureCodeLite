@@ -1,0 +1,185 @@
+#include <cassert>  // Provides assert
+#include <cstdlib>  // Provides NULL, rand
+using namespace std;
+
+//postcondition: empty deque has been created
+template <class T>
+deque<T>::deque()
+{
+    first=NULL;
+    last=NULL;//Empty deuqe is null in either first or last
+    count=0;
+}
+
+// postcondition: all resouroces allocated to the deque
+//                have been deallocated
+template <class T>
+deque<T>::~deque()
+{
+    list_clear(first);//Clear the list to destroy the whole deque
+    count=0;
+}
+
+// postcondition: newly created deque is a copy of dq
+template <class T>
+deque<T>::deque(const deque<T>& dq)
+{
+    if(this!=&dq)
+    {
+        list_copy(dq.first,first,last);//Copy all elements and members
+        count=dq.count;
+    }
+}
+
+// postcondition: current deque is a copy of dq 
+template <class T>
+deque<T>& deque<T>::operator = (const deque<T>& dq)
+{
+    if(this==&dq)
+        return *this;
+    else
+        list_copy(dq.first,first,last);//Copy all elements and members
+        count=dq.count;
+    return *this;
+}
+
+//precondition: deque is not empty
+// postcondition: reference to element at front of deque
+//                            has been returned
+template <class T>
+T& deque<T>::front()
+{
+    assert(!empty());
+    return first->data();
+}
+
+// precondition: deque is not empty
+// postcondition: copy of element at front of deque
+//                            has been returned
+template <class T>
+T deque<T>::front() const
+{
+    assert(!empty());
+    return first->data();
+}
+
+// precondition: deque is not empty
+// postcondition: reference to element at front of deque
+//                            has been returned
+template <class T>
+T& deque<T>::back()
+{
+    assert(!empty());
+    return last->data();
+}
+
+// precondition: deque is not empty
+// postcondition: copy of element at back of deque
+//                            has been returned
+template <class T>
+T deque<T>::back() const
+{
+    assert(!empty());
+    return last->data();
+}
+
+// precondition: deque is not full
+// postcondition: entry has been inserted at the front
+//                            of the deque
+template <class T>
+void deque<T>::push_front (const T& entry)
+{
+    list_head_insert(first,entry);//Insert to the front
+    if(empty())
+        last=first;//The first element being inserted is the last element in the current deuqe
+    ++count;
+}
+
+// precondition: deque is not full
+// postcondition: entry has been inserted at the back
+//                            of the deque
+template <class T>
+void deque<T>::push_back (const T& entry)
+{
+    if(empty())
+    {
+        list_head_insert(first,entry);//If this is the first insertion, Inserting to the back is equivalent to inserting to the back
+        last=first;//The first element being inserted is the last element in the current deuqe
+    }
+    else
+    {
+        list_insert(last,entry);//Insert to the last
+        last=last->link();//Last will be the newly inserted element
+    }
+    ++count;
+}
+
+// precondition: deque is not empty
+// postcondition: element at front of deque has been removed
+template <class T>
+void deque<T>::pop_front()
+{
+    assert(!empty());
+    list_head_remove(first);//Remove from the first element of current deque
+    --count;
+}
+
+// precondition: deque is not empty
+// postcondition: element at back of deque has been removed
+template <class T>
+void deque<T>::pop_back()
+{
+    assert(!empty());
+    if(last==first)
+        list_head_remove(first);//If there is one element, remove the head
+    else
+    {
+        last=list_locate(first,count-1);//If there are multiple elements, find the last element and remove it
+        list_remove(last);
+    }
+    --count;
+}
+
+// postcondition: number of elements in deque has been returned
+template <class T>
+typename deque<T>::size_type deque<T>::size() const
+{
+    return count;
+}
+
+// postcondition: whether deque is empty has been returned
+template <class T>
+bool deque<T>::empty() const
+{
+    return count==0;
+}
+
+// postcondition: returned whether 2 deques are equal - equal is defined
+//                            as the deques have the same number of elements &
+//                            corresponding elements are equal
+template <typename U>
+bool operator == (const deque<U>& dq1, const deque<U>& dq2)
+{
+    if(dq1.size()!=dq2.size())//If the size is different, no need to compare their elements
+        return false;
+    node<U>* cursor1=dq1.first;
+    node<U>* cursor2=dq2.first;
+    while(cursor1!=NULL&&cursor2!=NULL)//Loop through the whole deque until cursors find the difference
+        if(cursor1->data()!=cursor2->data())
+            return false;
+        else
+        {
+            cursor1=cursor1->link();
+            cursor2=cursor2->link();
+        }
+    return true;
+}
+
+// postcondition: dq has been display from front to rear on out
+template <typename U>
+ostream& operator<< (std::ostream& out, const deque<U>& dq)
+{
+    for(node<U>* cursor=dq.first;cursor!=NULL;cursor=cursor->link())//Loop through the whole deque and print them until the end
+        out<<cursor->data()<<" ";
+    return out;
+}

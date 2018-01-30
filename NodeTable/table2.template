@@ -1,0 +1,157 @@
+#include <algorithm>     // Provides copy
+#include <cassert>  // Provides assert
+#include <cstdlib>  // Provides NULL, rand
+
+using namespace std;
+using namespace main_savitch_6B;
+
+namespace main_savitch_12B
+{
+//CONSTRUCTOR for the Table<RecordType> template class:
+template <class RecordType>
+table<RecordType>::table( )
+{
+    for(size_t i=0;i<TABLE_SIZE;i++) //Set array pointing to NULL for all indexes
+        data[i]=NULL;
+    total_records=0;//Set the number of records 0
+}
+//Postcondition: The Table has been initialized as an empty Table.
+//
+template <class RecordType>
+table<RecordType>::table(const table& source)
+{
+    node<RecordType> *tail_ptr;//Create a null pointer because we don't know the tail pointer
+    for(size_t i=0;i<TABLE_SIZE;++i)//Copy array pointers for all indexes
+        list_copy(source.data[i],data[i],tail_ptr);
+    total_records=source.total_records;//Copy the number of records
+}
+//Postcondition: The copy constructor for Table has been created.
+//
+template <class RecordType>
+table<RecordType>::~table( )
+{
+    for (size_t i=0;i<TABLE_SIZE;++i)//Clear array pointers for all indexes
+        list_clear(data[i]);
+    total_records=0;//Set the number of records 0
+}
+//Postcondition: The destructor for Table has been created.
+//
+// MODIFICATION MEMBER FUNCTIONS for the Table<RecordType> class:
+template <class RecordType>
+void table<RecordType>::insert(const RecordType& entry)
+{
+    assert(entry.key>=0);
+    size_t index=hash(entry.key);//Calculate the hash index
+    
+    if(data[index]==NULL)
+    {
+        assert(size()<TABLE_SIZE);//Ensure there is a space for this record
+        list_head_insert(data[index],entry);//Insert the head if there is no record for this index
+        ++total_records;//Increment the total records
+    }
+    else
+    {
+        for(node<RecordType> *cursor=data[index];cursor!=NULL;cursor=cursor->link())//Traverse data[index]'s list
+        {
+            if(cursor->data().key==entry.key)//If we found the pointer's data.key is equal to entry.key
+            {
+                cursor->set_data(entry);//Replace the new entry's data for this key
+                return;//Done
+            }
+        }
+        assert(size()<TABLE_SIZE);//Ensure there is a space for this record
+        list_insert(data[index],entry);//After traversal, there is no existing key equal to entry.key, insert the new pointer for this record in the list at data[index]
+        ++total_records;//Increment the total records
+    }
+}
+//Precondition: entry.key >= 0. Also if entry.key is not already a key in
+//the table, then the Table has space for another record
+//(i.e., size( ) < CAPACITY).
+//Postcondition: If the table already had a record with a key equal to
+//entry.key, then that record is replaced by entry. Otherwise, entry has
+//been added as a new record of the Table.
+//
+template <class RecordType>
+void table<RecordType>::remove(int key)
+{
+    size_t index=hash(key);//Calculate the hash index
+    
+    if(data[index]!=NULL)//There should be at least one record to be removed, else nothing needs to be done
+    {
+        if(data[index]->link()!=NULL)//There are at least two records
+        {
+            for(node<RecordType> *cursor=data[index];cursor->link()!=NULL;cursor=cursor->link())//Travese data[index]'s list
+                if(cursor->link()->data().key==key)//When we find the link's key is equal to the removal key
+                {
+                    list_remove(cursor);//Remove the pointer's link
+                    --total_records;//Decrement the total records
+                    return;//The record for this key is removed, done
+                }
+        }
+        if(data[index]->data().key==key)//There is only one record, determine if this record's key is equal to the removal key
+        {
+            list_head_remove(data[index]);//If yes, remove this record
+            --total_records;//Decrement the total records
+        }
+    }
+}
+//Postcondition: If a record was in the Table with the specified key, then
+//that record has been removed; otherwise the table is unchanged.
+//
+
+template <class RecordType>
+void table<RecordType>::operator =(const table& source)
+{
+    if(this!=&source)//Avoid self-assignment
+    {
+        node<RecordType> *tail_ptr;//Create a null pointer because we don't know the tail pointer
+        for(size_t i=0;i<TABLE_SIZE;++i)//Copy array pointers for all indexes
+            list_copy(source.data[i],data[i],tail_ptr);
+        total_records=source.total_records;//Copy the number of records
+    }
+}
+//Postcondition: The assignment operator for Table has been created.
+//
+
+template <class RecordType>
+bool table<RecordType>::is_present(int key) const
+{
+    size_t index=hash(key);//Locate the index for this key
+    
+    for(node<RecordType> *cursor=data[index];cursor!=NULL;cursor=cursor->link())//Traverse the list in data[index]
+    {
+        if(cursor->data().key==key)
+            return true;//Return true if we found the key
+    }
+    return false;//Return false if we failed to find the key after traversal
+}
+//Postcondition: The return value is true if there is a record in the
+//Table with the specified key. Otherwise, the return value is false.
+//
+template <class RecordType>
+void table<RecordType>::find(int key, bool& found, RecordType& result) const
+{
+    size_t index=hash(key);//Locate the index for this key
+    found=false;//Initially set found false
+    
+    for(node<RecordType> *cursor=data[index];cursor!=NULL;cursor=cursor->link())//Traverse the list in data[index]
+    {
+        if(cursor->data().key==key)
+        {
+            found=true;//Set found true if we found the key
+            result=cursor->data();//Record the data for the result
+            return;//Return if we found the key
+        }
+    }
+}
+//Postcondition: If a record is in the Table with the specified key, then
+//found is true and result is set to a copy of the record with that key.
+//Otherwise found is false and the result contains garbage.
+
+template <class RecordType>
+size_t table<RecordType>::hash(int key) const
+{
+    return key%TABLE_SIZE;
+}
+//Postcondition: return the hash value
+}

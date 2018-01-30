@@ -1,0 +1,166 @@
+// FILE: bt_class.template
+// IMPLEMENTS: The binary_tree node class (see bt_class.h for documentation). 
+#include <cassert>    // Provides assert
+#include <cstdlib>   // Provides NULL, std::size_t
+#include <iomanip>    // Provides std::setw
+#include <iostream>   // Provides std::cout
+
+namespace main_savitch_10
+{
+//     Postcondition: The binary tree has been initialized as an empty tree
+//     (with no nodes).
+    template<class Item>
+    binary_tree<Item>::binary_tree( )
+    {
+        root=NULL;
+        current=NULL;
+        previous=NULL;
+    }
+    template<class Item>
+    binary_tree<Item>::binary_tree(const binary_tree& source)
+    {
+        root=tree_copy(source.root);
+        if(root==NULL)
+            current=NULL;
+        else
+            current=root;    
+        previous=NULL;
+    }
+    template<class Item>
+    void binary_tree<Item>::operator =(const binary_tree& source)
+    {
+        if(this==&source)
+            return;
+        tree_clear(root);
+        root=tree_copy(source.root);
+        if(root==NULL)
+            current=NULL;
+        else
+            current=root;
+        previous=NULL;
+    }
+    template<class Item>
+    binary_tree<Item>::~binary_tree( )
+    {
+        tree_clear(root);
+    }
+//     Precondition: size( ) is zero.
+//     Postcondition: The tree now has one node (a root node), containing the
+//     specified entry. This new root node is the "current node."
+    template<class Item>
+    void binary_tree<Item>::create_first_node(const Item& entry)
+    {
+        assert(size()==0);
+        root=new binary_tree_node<Item>(entry);
+        current=root;
+    }
+//     Precondition: size( ) > 0.
+//     Postcondition: The "current node" is now the root of the tree.
+    template<class Item>
+    void binary_tree<Item>::shift_to_root( )
+    {
+        assert(size()>0);
+        current=root;
+        previous=NULL;
+    }
+//     Precondition: has_parent( ) returns true.
+//     Postcondition: The "current node" has been shifted up to the parent of
+//     the old current node.
+    template<class Item>
+    void binary_tree<Item>::shift_up( )
+    {
+        assert(has_parent());
+        current=previous;
+    }
+//     Precondition: has_left_child( ) returns true.
+//     Postcondition: The "current node" been shifted down to the left child
+//     of the original current node
+    template<class Item>
+    void binary_tree<Item>::shift_left( )
+    {
+        assert(has_left_child());
+        previous=current;
+        current=current->left();
+    }
+//     Precondition: has_right_child( ) returns true.
+//     Postcondition: The "current node" been shifted down to the right child
+//     of the original current node.
+    template<class Item>
+    void binary_tree<Item>::shift_right( )
+    {        
+        assert(has_right_child());
+        previous=current;
+        current=current->right();
+    }
+//     Precondition: size( ) > 0.
+//     Postcondition: The data at the "current node" has been changed to the
+//     new entry.
+    template<class Item>
+    void binary_tree<Item>::change(const Item& new_entry)
+    {
+        assert(size()>0);
+        current->set_data(new_entry);
+    }
+//     Precondition: size( ) > 0, and has_left_child( ) returns false.
+//     Postcondition: A left child has been added to the "current node,"
+//     with the given entry.
+    template<class Item>
+    void binary_tree<Item>::add_left(const Item& entry)
+    {
+        assert(size()>0&&!has_left_child());
+        current->set_left(new binary_tree_node<Item>(entry));
+    }
+//     Precondition: size( ) > 0, and has_right_child( ) returns false.
+//     Postcondition: A right child has been added to the "current node,"
+//     with the given entry.
+    template<class Item>
+    void binary_tree<Item>::add_right(const Item& entry)
+    {
+        assert(size()>0);
+        assert(!has_right_child());
+        current->set_right(new binary_tree_node<Item>(entry));
+    }
+//     Precondition: size( ) > 0.
+//     Postcondition: the binary tree is displayed.
+    template<class Item>
+    void binary_tree<Item>::print_tree()
+    {
+        assert(size()>0);
+        print(root,0);
+    }
+//     Postcondition: The return value is the number of nodes in the tree.
+    template<class Item>
+    std::size_t binary_tree<Item>::size( ) const
+    {
+        return tree_size(root);
+    }
+//     Precondition: size( ) > 0.
+//     Postcondition: The return value is the data from the "current node."
+    template<class Item>
+    Item binary_tree<Item>::retrieve( ) const
+    {
+        assert(size()>0);
+        return current->data();
+    }
+//     Postcondition: Returns true if size( ) > 0, and the "current node"
+//     has a parent.
+    template<class Item>
+    bool binary_tree<Item>::has_parent( ) const
+    {
+        return previous!=NULL;
+    }
+//     Postcondition: Returns true if size( ) > 0, and the "current node"
+//     has a left child.
+    template<class Item>
+    bool binary_tree<Item>::has_left_child( ) const
+    {
+        return current->left()!=NULL;
+    }
+//     Postcondition: Returns true if size( ) > 0, and the "current node"
+//     has a right child.
+    template<class Item>
+    bool binary_tree<Item>::has_right_child( ) const
+    {
+         return current->right()!=NULL;
+    }
+}

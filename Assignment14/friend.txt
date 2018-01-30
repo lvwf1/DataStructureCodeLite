@@ -1,0 +1,22 @@
+6
+Bob
+Sally
+Barbara
+Steve
+Kevin
+Jennifer
+Bob Sally
+Jennifer Sally
+Barbara Sally
+Barbara Kevin
+Sally Bob
+Kevin Steve
+Steve Bob
+Kevin Jennifer
+Barbara Jennifer
+Sally Steve
+Kevin Barbara
+Jennifer Kevin
+Bob Steve
+Steve Jennifer
+Steve Barbara

@@ -1,0 +1,143 @@
+#include <cassert>  // Provides assert
+#include <cstdlib>  // Provides NULL, rand
+using namespace std;
+
+//postcondition: empty deque has been created
+template<class T>
+deque<T>::deque()
+{
+    first=0;
+    count=0;
+    last=0;//Every parameters are set to zero in the beginning
+}
+
+//precondition: deque is not empty
+// postcondition: reference to element at front of deque
+//                            has been returned
+template<class T>
+T& deque<T>::front()
+{
+    assert(!empty());
+    return data[first];
+}
+
+// precondition: deque is not empty
+// postcondition: copy of element at front of deque
+//                            has been returned
+template<class T>
+T deque<T>::front() const
+{
+    assert(!empty());
+    return data[first];
+}
+
+// precondition: deque is not empty
+// postcondition: reference to element at front of deque
+//                            has been returned
+template<class T>
+T& deque<T>::back()
+{
+    assert(!empty());
+    return data[last];
+}
+
+// precondition: deque is not empty
+// postcondition: copy of element at back of deque
+//                            has been returned
+template<class T>
+T deque<T>::back() const
+{
+    assert(!empty());
+    return data[last];
+}
+
+
+// precondition: deque is not full
+// postcondition: entry has been inserted at the front
+//                            of the deque
+template<class T>
+void deque<T>::push_front (const T& entry)
+{
+    assert(!full());
+    for(size_type i=count;i!=first;i=prev_index(i))//Push every element back one index to release data[first] for entry
+        data[i]=data[prev_index(i)];
+    data[first]=entry;
+    ++count;
+    last=count-1;
+}
+
+// precondition: deque is not full
+// postcondition: entry has been inserted at the back
+//                            of the deque
+template<class T>
+void deque<T>::push_back (const T& entry)
+{
+    assert(!full());
+    data[next_index(last)]=entry;//Put the entry at the end
+    ++count;
+    last=count-1;
+}
+
+// precondition: deque is not empty
+// postcondition: element at front of deque has been removed
+template<class T>
+void deque<T>::pop_front()
+{
+    assert(!empty());
+    for(size_type i=first;i!=last;i=next_index(i))//Push every element one index before to overwrite data[first]
+        data[i]=data[next_index(i)];
+    --count;
+    last=count-1;
+}
+
+// precondition: deque is not empty
+// postcondition: element at back of deque has been removed
+template<class T>
+void deque<T>::pop_back()
+{
+    assert(!empty());
+    --count;//Change the parameters and overwrite this back element in the future
+    last=count-1;
+}
+
+// postcondition: number of elements in deque has been returned
+template<class T>
+typename deque<T>::size_type deque<T>::size() const
+{
+    return count;
+}
+
+// postcondition: whether deque is empty has been returned
+template<class T>
+bool deque<T>::empty() const
+{
+    return count==0;
+}
+
+// postcondition: whether deque is full has been returned
+template<class T>
+bool deque<T>::full() const
+{
+    return count==CAPACITY;
+}
+
+// postcondition: returned whether 2 deques are equal - equal is defined
+//                            as the deques have the same number of elements &
+//                            corresponding elements are equal
+template<typename U>
+bool operator == (const deque<U>& dq1, const deque<U>& dq2)
+{
+    for(typename deque<U>::size_type i=dq1.first,j=dq2.first;i!=dq1.count||j!=dq2.count;i=dq1.next_index(i),j=dq2.next_index(j))
+        if(dq1.data[i]!=dq2.data[j]||i!=j)//Compare each elements
+            return false;
+    return true;
+}
+
+// postcondition: dq has been display from front to rear on out
+template<typename U>
+ostream& operator << (ostream& out, const deque<U>& dq)
+{
+    for(typename deque<U>::size_type i=dq.first;i!=dq.count;i=dq.next_index(i))
+        out<<dq.data[i]<<" ";//Display each elements
+    return out;
+}

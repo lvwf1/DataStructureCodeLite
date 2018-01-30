@@ -1,0 +1,481 @@
+#include <algorithm>     // Provides copy
+#include <cassert>  // Provides assert
+#include <cstdlib>  // Provides NULL, rand
+#include <iomanip>    // Provides std::setw
+
+using namespace std;
+
+namespace main_savitch_11
+{
+// CONSTRUCTOR for the set<Item> class:
+template<class Item>
+set<Item>::set( )
+{
+    data_count=0;
+    child_count=0;
+}
+//     Postcondition: The set is empty.
+template<class Item>
+set<Item>::set(const set& source)
+{
+    if(this!=&source)
+    {
+        data_count=source->data_count;
+        child_count=source->child_count;
+        copy(source->data, source->data+data_count, data);
+        copy(source->subset,source->subset+child_count, subset);
+    }
+}
+//     Postcondition: The set is copied
+template<class Item>
+void set<Item>::clear( )
+{
+    data_count=0;
+    child_count=0;
+}
+//     Postcondition: The set is empty.
+//
+
+template<class Item>
+void set<Item>::operator =(const set<Item>& source)
+{
+    if(this==&source)
+    {
+        return *this;//Avoid self-assignment
+    }
+    else
+    {
+        data_count=source->data_count;
+        child_count=source->child_count;
+        copy(source.data, source.data+data_count, data);
+        copy(source->subset,source->subset+child_count, subset);
+    }
+    return *this;
+}
+//     Postcondition: The set is copied
+template<class Item>
+bool set<Item>::insert(const Item& entry)
+{
+    loose_insert(entry);
+    if(data_count>MAXIMUM)
+    {
+        // create a subset and put all data and subset into it
+        set<Item> *child = new set<Item>();
+        // transfer data to new child:
+        for (size_t x=0; x<data_count; x++)
+            child->data[x] = data[x];
+        //transfer subset to new child:
+        for (size_t y=0; y<child_count; y++)
+            child->subset[y] = subset[y];
+        // finish setting up child set:
+        child->child_count = child_count;
+        child->data_count = data_count;
+        // reset current node as empty, with 1 child
+        data_count = 0;
+        child_count = 1;
+        // make new child subset of current node
+        subset[0] = child;
+        // let fix_excess to subset[0]'s excess problem and empty root
+        fix_excess(0);
+    }
+    return loose_insert(entry);
+}
+//     Postcondition: If an equal entry was already in the set, the set is
+//     unchanged and the return value is false. Otherwise, entry was added
+//     to the set and the return value is true. This is slightly different than
+//     the C++ Standard Library set (see Appendix H).
+//
+template<class Item>
+size_t set<Item>::erase(const Item& target)
+{
+    if (loose_erase(target))//target is found
+    {
+        if (data_count == 0 && child_count ==1) //root data has shortage
+            {
+                set<Item> *temp=subset[0];//deliver all data and subset in subset[0] to the upper level by creating a temp set
+                for(size_t i=0; i<temp->data_count; i++)
+                    data[i]=temp->data[i];//Copy all data from subset[0]
+                child_count=temp->child_count;
+                data_count=temp->data_count;//Copy the parameters
+                for(size_t i=0; i<child_count; i++)
+                    subset[i]=temp->subset[i];//Copy all subsets from subset[0]
+                delete temp;
+            }
+        return 1; //target is found, erase it
+    }
+    else
+        return 0; // target not found
+}
+//     Postcondition: If target was in the set, then it has been removed from
+//     the set and the return value is 1. Otherwise the set is unchanged and the
+//     return value is zero.
+//
+// CONSTANT MEMBER FUNCTIONS for the set<Item> class:
+template<class Item>
+size_t set<Item>::count(const Item& target) const
+{
+    size_t i=0;
+    while(i<data_count&&data[i]<target) //increment index until we get the closest index to the target
+        i++;
+    if(data[i]==target)//target is found
+        return 1;
+    if(is_leaf())//target is not found and it is a leaf
+        return 0;//target does not exist 
+    else//target is not found but it is not a leaf
+        return subset[i]->count(target);//Their children may have the target
+}
+//     Postcondition: Returns the number of items equal to the target
+//     (either 0 or 1 for a set).
+//
+
+template<class Item>
+void set<Item>::print(int indent) const
+{
+    if(is_leaf())
+    {
+        cout<<setw(3*indent)<<"";
+        for(size_t i=0;i<data_count;i++)
+            cout<<data[i]<<" ";
+    }
+    else
+    {
+        for(size_t i=0;i<child_count;i++)
+        {
+            subset[i]->print(indent+1);
+            cout<<setw(3*indent)<<"";
+            if(i!=child_count-1)
+                cout<<data[i]<<endl;
+        }
+    }
+    cout<<endl;
+}
+//      Postcondition: print all elements
+template<class Item>
+bool set<Item>::loose_insert(const Item& entry)
+{
+    size_t i=0;
+    while(data[i]<entry&&i<data_count)//increment index until we get the closest index to the entry
+    {
+        i++;
+    }
+    if(data[i]==entry)//Entry is found, there is no need to insert it
+        return false;
+    if(is_leaf())//Entry is not found and it is a leaf
+    {
+        for(size_t j=data_count;j>i;j--)//Shift all elements to the right and reserve an index for entry
+        {
+            data[j]=data[j-1];
+        }
+        data[i]=entry;//Insert the entry
+        data_count++;//Increment the data_count
+        return true;//Insert it successfully
+    }
+    else//Entry is not found but it is not a leaf
+    {
+        bool b=subset[i]->loose_insert(entry);//Its subsets may have the entry
+        if(subset[i]->data_count>MAXIMUM)//Its subset probably is excess
+            fix_excess(i);//fix the problem
+        return b;//whether it is inserted depends on its subset
+    }
+}
+// Precondition: The entire B-tree is valid.
+// Postcondition: If entry was already in the set, then the set is unchanged
+// and the return value is false. Otherwise, the entry has been added to the
+// set, the return value is true, and the entire B-tree is still
+// valid EXCEPT that the number of entries in the root of this set might be
+// one more than the allowed maximum. 
+template<class Item>
+bool set<Item>::loose_erase(const Item& target)
+{
+	size_t i=0;
+	while (data[i]<target&&i<data_count)//increment index until we get the closest index to the entry
+    {
+        i++;
+    }
+
+	if(i==data_count&&is_leaf())// target is not found
+		return false;
+	if(i<data_count&&data[i]==target&&is_leaf()) // target is found and it is a leaf
+	{	
+        data_count--;
+		for(size_t j = i; j<data_count; j++)//Shift all elements to the left and overwrite the target
+			data[j]=data[j + 1];	
+		return true;
+	}
+	if(i==data_count||(i<data_count&&data[i]!=target))//target is not found after the loop
+	{	
+        if(is_leaf())
+			return false;//It is a leaf, then no subset need to be searched
+		subset[i]->loose_erase(target);//Search its subset
+		if(subset[i]->data_count < MINIMUM)//Deleting its subset element may cause shortage,
+			fix_shortage(i);//It should be fixed
+		return true;
+	}
+   // last possibility -- root has value, but also subtrees -- must maintain
+   // shape of B-tree
+   // cout << "option 4" << endl;
+	if(subset[i+1]->data_count>MINIMUM&&is_leaf())//target is found and its right subset is sufficient
+        subset[i+1]->remove_smallest(data[i]);	//take the right subset's smallest value replace the target
+	else
+	{	
+        subset[i]->remove_biggest(data[i]); //target is found, but its left subset is insufficient
+		if(subset[i]->data_count < MINIMUM) //after replace the target, it may cause shortage
+			fix_shortage(i); //fix the problem
+	}
+	return true;//Target is found eventually
+}
+
+template<class Item>
+void set<Item>::remove_biggest(Item& removed_entry)
+{
+    if(is_leaf())//It is a leaf, get the biggest child, no need to worry about its subset's shortage
+	{
+		data_count--;//Decrement data_count
+		removed_entry = data[data_count];//the last one is the biggest one that needs to be removed
+	}
+	else//It is not a leaf, get the biggest child
+	{
+		subset[child_count-1]->remove_biggest(removed_entry);//The biggest subset's data should replace the removed entry
+		if(subset[child_count-1]->data_count<MINIMUM)//its subset may cause shortage
+			fix_shortage(child_count-1);//The shortage should be fixed in subset[child_count-1]
+	}
+}
+
+template <class Item>
+void set<Item>::remove_smallest(Item& removed_entry)
+{	
+    removed_entry=data[0];//Replace the root by the most left (smallest) value
+    for(size_t i=0; i<data_count; ++i)
+        data[i]=data[i + 1];//Shift all elements to the left and replace the smallest value
+    --data_count;//decrement the data_count
+}
+
+
+template<class Item>
+void set<Item>::fix_excess(size_t i)
+{
+    assert(i<child_count);
+    size_t ct;
+    // copy middle entry of subset to root:
+    for(ct=data_count;ct>i;ct--)
+        data[ct]=data[ct-1];
+    data[i]=subset[i]->data[MINIMUM];//MINIMUM=MAXIMUM/2, so MINIMUN is the middle index
+    data_count++;
+    // split child into 2 subsets:
+    set<Item> *lc=new set<Item>();
+    set<Item> *rc=new set<Item>();
+    lc->data_count=MINIMUM;
+    rc->data_count=MINIMUM;
+    // copy data from original subset into 2 splits:
+    for (ct=0;ct<MINIMUM;ct++) 
+    {
+        lc->data[ct]=subset[i]->data[ct];//Left half copying
+        rc->data[ct]=subset[i]->data[ct+MINIMUM+1];//Right half copying
+    }
+    // copy subsets of child if they exist:
+    size_t subChCt=(subset[i]->child_count)/2;
+    for (ct=0;ct<subChCt;ct++) 
+    {
+        lc->subset[ct]=subset[i]->subset[ct];//Left half copying
+        rc->subset[ct]=subset[i]->subset[ct+subChCt];//Right half copying
+    }
+    if(!(subset[i]->is_leaf()))	// copy subsets if any exist
+	{
+		for(ct=0; ct<subChCt; ct++)
+		{
+			lc->subset[ct]=subset[i]->subset[ct];//Left half copying
+			rc->subset[ct]=subset[i]->subset[ct+subChCt];//Right half copying
+		}
+		lc->child_count=MINIMUM+1;
+		rc->child_count=MINIMUM+1;
+	}
+    
+    //Establish new subset:
+	subset[child_count]=new set<Item>();
+	for(ct=child_count;ct>i;ct--)//Reserve an index for this new subset
+		subset[ct]=subset[ct-1];
+	child_count++;
+
+	subset[i]=lc;//Assign the left child to left subset
+	subset[i+1]=rc;//Assign the right child to right subset
+}
+// Precondition: (i < child_count) and the entire B-tree is valid EXCEPT that
+// subset[i] has MAXIMUM + 1 entries.
+// Postcondition: The tree has been rearranged so that the entire B-tree is
+// valid EXCEPT that the number of entries in the root of this set might be
+// one more than the allowed maximum.  
+
+template<class Item>
+void set<Item>::fix_shortage(size_t i)
+{
+    assert(i<child_count);
+    size_t j;
+	//i isn't left child, and left sibling has a spare
+	if(subset[i-1]->data_count > MINIMUM && MINIMUM > 1)
+	{	
+        cout<<"Borrow Left"<<endl;
+        
+		if(subset[i]->is_leaf())
+		{	
+            for(j = subset[i]->data_count; j > 0; --j)
+				subset[i]->data[j] = subset[i]->data[j - 1];
+			subset[i]->data[0] = data[i - 1];
+			subset[i]->data_count++;
+
+			data[i - 1] = subset[i - 1]->data[subset[i - 1]->data_count - 1];
+			subset[i - 1]->data_count--;
+		}
+		else
+		{
+            cout << "else of borrow left" << endl;
+            for(j = subset[i]->data_count; j > 0; --i)
+			{	subset[i]->data[j] = subset[i]->data[j - 1];
+				subset[i]->subset[j + 1] = subset[i]->subset[j];
+			}
+			subset[i]->subset[1] = subset[i]->subset[0];
+			subset[i]->data[0] = data[i - 1];
+			subset[i]->data_count++;
+
+			subset[i]->subset[0]
+				= subset[i - 1]->subset[subset[i - 1]->data_count];
+			subset[i]->child_count++;
+			subset[i - 1]->child_count--;
+
+			data[i - 1] = subset[i - 1]->data[subset[i - 1]->data_count - 1];
+			subset[i - 1]->data_count--;
+		}
+	}
+
+	//i isn't right child, and right sibling has a spare
+	else if(i < data_count && subset[i + 1]->data_count > MINIMUM)
+	{	
+        cout<<"Borrow Right"<<endl;
+		if(subset[i]->is_leaf())
+		{	
+            subset[i]->data[subset[i]->data_count] = data[i];
+			subset[i]->data_count++;
+			data[i] = subset[i + 1]->data[0];
+			subset[i + 1]->data_count--;
+			for(j = 0; j < subset[i + 1]->data_count; ++j)
+				subset[i + 1]->data[j] = subset[i + 1]->data[j + 1];
+		}
+		else
+		{	
+            cout<<"Borrow Right"<<endl;
+			subset[i]->data[subset[i]->data_count] = data[i];
+			subset[i]->data_count++;
+			subset[i]->subset[subset[i]->data_count] = subset[i + 1]->subset[0];
+			data[i] = subset[i + 1]->data[0];
+			subset[i + 1]->data_count--;
+            for(j = 0; j < subset[i + 1]->data_count; ++j)
+			{	subset[i + 1]->data[i] = subset[i + 1]->data[j + 1];
+				subset[i + 1]->subset[i] = subset[i + 1]->subset[j + 1];
+			}
+			subset[i + 1]->subset[j] = subset[i + 1]->subset[j + 1];
+ 			subset[i + 1]->child_count--;
+ 			subset[i]->child_count++;
+		}
+	}
+
+	//MUST COMBINE WITH A SIBLING
+
+	//combine with left sibling
+	else if(i > 0)
+	{	
+        cout<<"Combine Left"<<endl;
+		if(subset[i]->is_leaf())
+		{	subset[i - 1]->data[subset[i - 1]->data_count] = data[i - 1];
+			subset[i - 1]->data_count++;
+			for(j = 0; j < subset[i]->data_count; ++j)
+			{	
+                subset[i - 1]->data[subset[i - 1]->data_count] = subset[i]->data[j];
+				subset[i - 1]->data_count++;
+			}
+			delete subset[i];
+			subset[i] = NULL;
+			--child_count;
+
+			for(j = i; j < data_count; ++j)
+			{	data[j - 1] = data[j];
+				subset[j] = subset[j + 1];
+			}
+			--data_count;
+		}
+		else
+		{	
+            subset[i - 1]->data[subset[i - 1]->data_count] = data[i - 1];
+			subset[i - 1]->data_count++;
+			for(j = 0; j < subset[i]->data_count; ++j)
+			{	
+                subset[i - 1]->data[subset[i - 1]->data_count] = subset[i]->data[i];
+				subset[i - 1]->subset[subset[i - 1]->data_count] = subset[i]->subset[i];
+				subset[i - 1]->data_count++;
+				subset[i - 1]->child_count++;
+			}
+			subset[i - 1]->subset[subset[i - 1]->data_count] = subset[i]->subset[subset[i]->data_count];
+			subset[i - 1]->child_count++;
+
+			delete subset[i];
+			subset[i] = NULL;
+			--child_count;
+
+			for(j = i; j < data_count; ++j)
+			{	
+                data[j - 1] = data[j];
+				subset[j] = subset[j + 1];
+			}
+            --data_count;
+		}
+	}
+
+	//combine with right sibling(i is left child)
+	else
+	{	
+        cout<<"Combine Right"<<endl;
+		if(subset[i]->is_leaf())
+		{	
+            subset[i]->data[subset[i]->data_count] = data[i];
+			subset[i]->data_count++;
+			for(j = 0; j < subset[i + 1]->data_count; ++j)
+			{	
+                subset[i]->data[subset[i]->data_count] = subset[i + 1]->data[j];
+				subset[i]->data_count++;
+			}
+			delete subset[i + 1];
+			--child_count;
+            
+			for( j = i; j < data_count - 1; ++j)
+			{	
+                data[j] = data[j + 1];
+				subset[j + 1] = subset[j + 2];
+			}
+			--data_count;
+		}
+		else
+		{	
+            subset[i]->data[subset[i]->data_count] = data[i];
+			subset[i]->data_count++;
+			for(j = 0; j < subset[i + 1]->data_count; ++j)
+			{	
+                subset[i]->data[subset[i]->data_count] = subset[i + 1]->data[j];
+				subset[i]->subset[subset[i]->data_count] = subset[i + 1]->subset[j];
+				subset[i]->data_count++;
+				subset[i]->child_count++;
+			}
+			subset[i]->subset[subset[i]->data_count]
+				= subset[i + 1]->subset[subset[i + 1]->data_count];
+			subset[i]->child_count++;
+
+			delete subset[i + 1];
+			subset[i + 1] = NULL;
+			--child_count;
+
+			for(j = i; j < data_count; ++j)
+			{	data[j] = data[j + 1];
+				subset[j + 1] = subset[j + 2];
+			}
+			--data_count;
+		}
+	}
+}
+}
